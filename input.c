@@ -22,9 +22,6 @@ extern pthread_mutex_t s_okToModifyMutex;
 extern bool end, done;
 extern char *buf;
 
-struct sockaddr_in local;
-unsigned int len;
-
 // Does nothing other than await input from the keyboard.
 // uses select() to refrech stdin read
 void *inputThreadFunc(void *unsued)
