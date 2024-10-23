@@ -22,17 +22,15 @@ extern pthread_mutex_t s_okToModifyMutex;
 extern bool end, done;
 extern char *buf;
 
+pthread_t inputThread;
+
 // Does nothing other than await input from the keyboard.
 // uses select() to refrech stdin read
 void *inputThreadFunc(void *unsued)
 {
-    // char *msgTx = (char *)malloc(MAX_MSG_SIZE);
-    // strcpy(msgTx, "null");
-    int fd;
+    int fd = 0;
     buf = malloc(MAX_MSG_SIZE);
     int ret, sret;
-
-    fd = 0;
 
     fd_set readfds;
     struct timeval timeout;
@@ -48,7 +46,7 @@ void *inputThreadFunc(void *unsued)
         timeout.tv_usec = 0;
 
         // create file descriptor to monitor
-        // this file descrripter monites the stdin
+        // this file descrripter monitors the stdin
         sret = select(8, &readfds, NULL, NULL, &timeout);
 
         if (sret == 0)
@@ -87,16 +85,12 @@ void *inputThreadFunc(void *unsued)
         }
     }
 
-    // printf("**input--done**\n");
     pthread_cond_signal(&s_okToSendCondVar);
     done = true;
     end = true;
     free(buf);
-    // free(msgTx);
     return NULL;
 }
-
-pthread_t inputThread;
 
 void Input_init(void)
 {
